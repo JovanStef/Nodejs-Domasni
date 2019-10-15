@@ -84,7 +84,6 @@ app.patch('/users/:id', (req, res) => {
 
     let putUser = users[req.params.id-1];
 
-   
    putUser.name = req.body.name;
    
    putUser.email = req.body.email;
