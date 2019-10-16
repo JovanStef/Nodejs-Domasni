@@ -103,6 +103,9 @@ app.patch('/users/:id', (req, res) => {
 });
 
 app.delete('/users/:id', (req, res) => {
+let allUsers = JSON.parse(fs.readFileSync(path.join(__dirname,'users.json')));
+ allUsers.splice(req.params.id-1,1);
+ fs.writeFileSync(path.join(__dirname, 'users.json'),JSON.stringify(allUsers));
     res.send("Delete user with id = " + req.params.id);
 });
 
