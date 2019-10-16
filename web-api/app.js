@@ -73,41 +73,57 @@ app.put('/users/:id', (req, res) => {
   let allUsers = fs.readFileSync(path.join(__dirname, 'users.json'))
   let users = JSON.parse(allUsers)
 
-  let putUser = users[req.params.id - 1]
-
-  putUser.id = parseInt(req.params.id)
-  putUser.name = req.body.name
-  putUser.surname = req.body.surname
-  putUser.email = req.body.email
-  putUser.age = req.body.age
-  putUser.isActive = req.body.isActive
+  // let putUser = users[req.params.id - 1]
+users.forEach((user)=>{
+  if(user.id === parseInt(req.params.id)){
+    
+    user.name = req.body.name
+    user.surname = req.body.surname
+    user.email = req.body.email
+    user.age = req.body.age
+    user.isActive = req.body.isActive
 
   fs.writeFileSync(path.join(__dirname, 'users.json'), JSON.stringify(users))
 
   res.send('putUser')
+  }
+})
+  
 })
 
 app.patch('/users/:id', (req, res) => {
   let allUsers = fs.readFileSync(path.join(__dirname, 'users.json'))
   let users = JSON.parse(allUsers)
-  let putUser = users[req.params.id - 1]
-  putUser.name = req.body.name
-  putUser.email = req.body.email
-
-  fs.writeFileSync(path.join(__dirname, 'users.json'), JSON.stringify(users))
-  res.send('patchUser')
+  users.forEach((user)=>{
+    if(user.id === parseInt(req.params.id)){
+      
+      user.name = req.body.name
+      user.surname = req.body.surname
+  
+    fs.writeFileSync(path.join(__dirname, 'users.json'), JSON.stringify(users))
+  
+    res.send('patchUser')
+  }
 });
+})
 
 app.delete('/users/:id', (req, res) => {
-  let allUsers = JSON.parse(fs.readFileSync(path.join(__dirname, 'users.json')))
-  allUsers.splice(req.params.id - 1, 1)
-  fs.writeFileSync(path.join(__dirname, 'users.json'), JSON.stringify(allUsers))
+  let allUsers = JSON.parse(fs.readFileSync(path.join(__dirname, 'users.json')));
+
+  // allUsers.splice(req.params.id - 1, 1);
+
+  let users = allUsers.filter((user)=>{
+     return user.id !== parseInt(req.params.id)
+      
+  })
+   
+  fs.writeFileSync(path.join(__dirname, 'users.json'), JSON.stringify(users))
   res.send('Delete user with id = ' + req.params.id)
 });
 
 app.use((req,res,next)=>{
  var error = new Error('Route not found!');
-//  error.status = 404;
+ error.status = 404;
  next(error);
 });
 

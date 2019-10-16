@@ -17,16 +17,16 @@
     },
     {
         "id": 3,
-        "name": "Filip",
-        "surname": "Filipovski",
-        "email": "filip@gmail.com",
-        "age": 31,
+        "name": "2222",
+        "surname": "333",
+        "email": "simona@gmail.com",
+        "age": 28,
         "isActive": true
     },
     {
         "id": 4,
-        "name": "Jovana",
-        "surname": "Jovanovska",
+        "name": "Marija",
+        "surname": "Kuzmanoska",
         "email": "jovan@gmail.com",
         "age": 18,
         "isActive": true
