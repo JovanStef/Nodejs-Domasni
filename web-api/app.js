@@ -2,6 +2,8 @@ var express = require('express');
 var bodyParser = require('body-parser');
 const fs = require('fs');
 const path = require('path');
+const { applyOperation } = require('fast-json-patch');
+// const applyOperation = require('fast-json-patch').applyOperation;
 require('dotenv/config');
 
 const app = express();
@@ -78,24 +80,26 @@ app.put('/users/:id', (req, res) => {
     res.send("putUser");
 });
 
-
 app.patch('/users/:id', (req, res) => {
+
     let allUsers = fs.readFileSync(path.join(__dirname, 'users.json'));
     let users = JSON.parse(allUsers);
-
     let putUser = users[req.params.id-1];
-
-   
    putUser.name = req.body.name;
-   
    putUser.email = req.body.email;
-   
-    
 //    let usersToString = JSON.stringify(putUser);
    fs.writeFileSync(path.join(__dirname,'users.json'),JSON.stringify(users))
 
-    // console.log(putUser);
     res.send("patchUser");
+
+// let index = req.params.id-1
+// let patch = [
+//     { "op": "replace", "path": putUser+"/name", "value": "boo" },
+//     { "op": "replace", "path": putUser+"/email", "value": "boo" }
+// ]
+// // let old = fs.writeFileSync(path.join('users.json'),JSON.stringify(putUser))
+//   users = jsonpatch.applyPatch('users.json', patch).newDocument;
+//   res.send("fooboo");
 });
 
 app.delete('/users/:id', (req, res) => {
