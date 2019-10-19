@@ -70,5 +70,13 @@
         "email": "code2@gmail.com",
         "age": 23,
         "isActive": true
+    },
+    {
+        "id": 12,
+        "name": "Martin",
+        "surname": "Martinovski",
+        "email": "martin@gmail.com",
+        "age": 20,
+        "isActive": false
     }
 ]

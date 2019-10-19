@@ -1,16 +1,21 @@
 
-var express = require('express')
-var bodyParser = require('body-parser')
-const fs = require('fs')
-const path = require('path')
-const { applyOperation } = require('fast-json-patch')
-// const applyOperation = require('fast-json-patch').applyOperation;
-require('dotenv/config')
+var express = require('express');
+var bodyParser = require('body-parser');
+const fs = require('fs');
+const path = require('path');
 
-const app = express()
+var users = require('./users/routes');
+var errors = require('./errors/err');
 
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
+
+require('dotenv/config');
+
+const app = express();
+
+app.use('/users-route', users);
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 logger = (req, res, next) => {
   console.log(`Logged ${req.url} ${req.method} --${new Date()}`)
@@ -39,11 +44,11 @@ app.get('/write', (req, res) => {
   res.status(201).send(newStudent)
 })
 
-app.get('/users', (req, res) => {
-  let rawdata = fs.readFileSync(path.join(__dirname, 'users.json'))
-  let users = JSON.parse(rawdata)
-  res.status(200).send(users)
-})
+// app.get('/users', (req, res) => {
+//   let rawdata = fs.readFileSync(path.join(__dirname, 'users.json'))
+//   let users = JSON.parse(rawdata)
+//   res.status(200).send(users)
+// })
 
 app.get('/users/:id', (req, res) => {
   let rawdata = fs.readFileSync(path.join(__dirname, 'users.json'))
@@ -57,17 +62,25 @@ app.get('/users/:id', (req, res) => {
   res.status(200).send(currentUser[0].name)
 })
 
-app.post('/users', (req, res) => {
+app.post('/users', (req, res,next) => {
   let rawdata = fs.readFileSync(path.join(__dirname, 'users.json'))
   let users = JSON.parse(rawdata)
+  
+  var userExists = users.some(user=>{return req.body.id === user.id });
 
-  users.push(req.body)
-
-  let data = JSON.stringify(users)
-  fs.writeFileSync(path.join(__dirname, 'users.json'), data)
+console.log(userExists)
+  if(userExists){
+    var error = new Error('User with ID exists!');
+    error.status =  401;
+    next(error);
+  }
+  else{
+    users.push(req.body);
+  }
+  fs.writeFileSync(path.join(__dirname, 'users.json'), JSON.stringify(users))
 
   res.status(201).send('User has been created!')
-})
+});
 
 app.put('/users/:id', (req, res) => {
   let allUsers = fs.readFileSync(path.join(__dirname, 'users.json'))
@@ -113,7 +126,7 @@ app.delete('/users/:id', (req, res) => {
   // allUsers.splice(req.params.id - 1, 1);
 
   let users = allUsers.filter((user)=>{
-     return user.id !== parseInt(req.params.id)
+    return user.id !== parseInt(req.params.id)
       
   })
    
@@ -127,15 +140,17 @@ app.use((req,res,next)=>{
  next(error);
 });
 
-app.use((err,req,res,next)=>{
-    var errObj = {
-        status: err.status,
-        error : {
-            message:err.message
-        }
-    }
-    res.status(err.status || 500).send(errObj);
-});
+app.use(errors.errorHandler)
+
+// app.use((err,req,res,next)=>{
+//     var errObj = {
+//         status: err.status,
+//         error : {
+//             message:err.message
+//         }
+//     }
+//     res.status(err.status || 500).send(errObj);
+// });
 
 var port = process.env.PORT || 8080
 app.listen(port, () => {
