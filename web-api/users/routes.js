@@ -1,6 +1,7 @@
 var express = require('express');
 const fs = require('fs');
 const path = require('path');
+const first = require('../../console-app/first');
 
 
 var routes = express.Router();
@@ -18,16 +19,16 @@ routes.get('/', (req, res) => {
 routes.get('/:name', (req,res,next)=>{
   let rawdata = fs.readFileSync(path.join(__dirname, '../users.json'));
   let users = JSON.parse(rawdata);
+  let paramToSentCase =first.titleCase(req.params.name)
   
   var currentUser = users.filter(user=>{
-    var someuser= user.name === req.params.name
+    var someuser= user.name === paramToSentCase
     return someuser
   });
   if(currentUser.length == 0){
     var error = new Error('no such username!');
     error.status = 404;
     next(error);
-    // app.use(errors.errorHandler)
    
   }
   else{
@@ -38,14 +39,5 @@ routes.get('/:name', (req,res,next)=>{
   
 });
 
-// app.use((err,req,res,next)=>{
-//     var errObj = {
-//         status: err.status,
-//         error : {
-//             message:err.message
-//         }
-//     }
-//     res.status(err.status || 500).send(errObj);
-// });
       
       module.exports = routes
