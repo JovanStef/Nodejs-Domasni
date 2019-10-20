@@ -140,7 +140,7 @@ app.use((req,res,next)=>{
  next(error);
 });
 
-app.use(errors.errorHandler)
+app.use(errors.errorHandler);
 
 // app.use((err,req,res,next)=>{
 //     var errObj = {
