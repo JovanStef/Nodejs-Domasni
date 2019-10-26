@@ -1,10 +1,31 @@
 const fs = require('fs');
 const path = require('path');
 const helpers = require('../helpers');
+const conDB = require('../database');
 
-getAllUsers = (req, res) => {
-    var users = helpers.readFromJson();
-    res.status(200).send(users);
+getAllUsersQuery = () => {
+    const query = 'SELECT *FROM user';
+    return new Promise((resolve, reject) => {
+        conDB.query(query, (error, results, fields) => {
+            if (error) {
+                reject(error);
+            }
+            else {
+                resolve(results);
+            }
+        });
+    });
+};
+
+getAllUsers = async(req,res)=>{
+    try{
+        const users = await getAllUsersQuery();
+        res.status(200).send(users);
+    }
+    catch (error){
+        res.status(500).send(error.message);
+        
+    }
 };
 
 getUserByName = (req, res, next) => {
@@ -41,7 +62,7 @@ getUserByID = (req, res) => {
 
 createNewUser = (req, res, next) => {
     var users = helpers.readFromJson();
-    
+
     var userExists = users.some(user => { return req.body.id === user.id });
     if (userExists) {
         var error = new Error('User with ID exists!');
@@ -51,7 +72,7 @@ createNewUser = (req, res, next) => {
     else {
         users.push(req.body);
     }
-    
+
     helpers.writeToJson(users)
     res.status(201).send('User has been created!')
 };
@@ -70,36 +91,36 @@ updateUser = (req, res) => {
 
             res.status(202).send('User udated');
         }
-});
+    });
 };
 
 editUser = (req, res) => {
     var users = helpers.readFromJson();
     users.forEach((user) => {
-      if (user.id === parseInt(req.params.id)) {
-  
-        user.name = req.body.name
-        user.surname = req.body.surname
-  
-    helpers.writeToJson(users)
-    
-  
-        res.send('patchUser')
-      }
-    });
-  };
+        if (user.id === parseInt(req.params.id)) {
 
- deleteUser =(req, res) => {
+            user.name = req.body.name
+            user.surname = req.body.surname
+
+            helpers.writeToJson(users)
+
+
+            res.send('patchUser')
+        }
+    });
+};
+
+deleteUser = (req, res) => {
     var allUsers = helpers.readFromJson();
-      
+
     let users = allUsers.filter((user) => {
-      return user.id !== parseInt(req.params.id)
+        return user.id !== parseInt(req.params.id)
     })
     helpers.writeToJson(users)
-  
-    
+
+
     res.send('Delete user with id = ' + req.params.id)
-  };
+};
 
 module.exports = {
     getAllUsers,

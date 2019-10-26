@@ -1,0 +1,11 @@
+id,name,surname,email,age,isActive
+1,Nikola,Stojkovski,nikola@gmail.com,24,true
+2,Martin,Martinovski,martin@gmail.com,20,false
+3,22222,33333,simona@gmail.com,28,true
+4,Marija,Kuzmanoska,jovan@gmail.com,18,true
+5,Marija,Stojkovska,marija@gmail.com,28,true
+6,1111111,Petrovski,1111111@gmail.com,22,false
+7,Simona,Simonovska,simona@gmail.com,28,true
+8,Code,Academy,code@gmail.com,23,true
+9,Code2,Academy2,code2@gmail.com,23,true
+12,Martin,Martinovski,martin@gmail.com,20,false
