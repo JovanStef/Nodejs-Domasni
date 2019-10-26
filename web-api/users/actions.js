@@ -17,81 +17,141 @@ getAllUsersQuery = () => {
     });
 };
 
-getAllUsers = async(req,res)=>{
-    try{
+getAllUsers = async (req, res) => {
+    try {
         const users = await getAllUsersQuery();
         res.status(200).send(users);
     }
-    catch (error){
+    catch (error) {
         res.status(500).send(error.message);
-        
+
     }
 };
 
-getUserByName = (req, res, next) => {
-    var users = helpers.readFromJson();
-    let paramToSentCase = helpers.titleCase(req.params.name)
-
-    var currentUser = users.filter(user => {
-        var someuser = user.name === paramToSentCase
-        return someuser
+getSpecificUserNameQuery = async (userName) => {
+    const query = 'SELECT * FROM user WHERE name=?';
+    return new Promise((resolve, reject) => {
+        conDB.query(query, [userName], (error, results, fields) => {
+            if (error) {
+                reject(error);
+            }
+            else {
+                resolve(results);
+            }
+        });
     });
-    if (currentUser.length == 0) {
+};
+
+getUserByName = async (req, res, next) => {
+    const userName = helpers.titleCase(req.params.name)
+    if (userName.length == 0) {
         var error = new Error('no such username!');
         error.status = 404;
         next(error);
-
     }
-    else {
-        res.status(200).send(currentUser);
-        return currentUser
+    try {
+        const user = await getSpecificUserNameQuery(userName);
+        res.status(200).send(user[0]);
+    }
+    catch{
+        res.status(500).send(error.message);
+    }
+};
+getSpecificUserIDQuery = async (userID) => {
+    const query = 'SELECT * FROM user WHERE id=?';
+    return new Promise((resolve, reject) => {
+        conDB.query(query, [userID], (error, results, fields) => {
+            if (error) {
+                reject(error);
+            }
+            else {
+                resolve(results);
+            }
+        });
+    });
+};
 
+getUserByID = async (req, res, next) => {
+    const userID = req.params.id;
+    if (userID <= 0) {
+        var error = new Error('Id can not be less than 1!');
+        error.status = 401;
+        return next(error);
+    }
+    try {
+        const user = await getSpecificUserIDQuery(userID);
+        res.status(200).send(user[0]);
+    }
+    catch (error) {
+        res.status(500).send(error.message);
     }
 
 };
 
-getUserByID = (req, res) => {
-    var users = helpers.readFromJson();
-    let currentUser = users.filter(x => {
-        let selectedUser = x.id == req.params.id
-        return selectedUser
-    })
+writeNewUserToSQL = (name, surname, email, age, isActive) => {
+    const query = "INSERT INTO user (name, surname, email,age,IsActive) VALUES ('" + name + "','" + surname + "','" + email + "'," + age + "," + isActive + ");";
+    return new Promise((resolve, reject) => {
+        conDB.query(query, (error, results, fields) => {
+            if (error) {
+                reject(error);
+            }
+            else {
+                resolve(results);
+            }
+        });
+    });
+}
 
-    res.status(200).send(currentUser[0])
-};
-
-createNewUser = (req, res, next) => {
-    var users = helpers.readFromJson();
-
-    var userExists = users.some(user => { return req.body.id === user.id });
+createNewUser = async (req, res, next) => {
+    const users = await getAllUsersQuery()
+    var userExists = users.some(user => { return req.body.email === user.email });
     if (userExists) {
-        var error = new Error('User with ID exists!');
+        var error = new Error('User with eamil exists!');
+        error.status = 401;
+        next(error);
+    } else if (!helpers.emailValidator(req.body.email)) {
+        var error = new Error('Email not valid!');
         error.status = 401;
         next(error);
     }
-    else {
-        users.push(req.body);
+    else if (!helpers.ageValidator(req.body.age)) {
+        var error = new Error('Age must be over 18!');
+        error.status = 401;
+        next(error);
     }
-
-    helpers.writeToJson(users)
-    res.status(201).send('User has been created!')
+    await writeNewUserToSQL(req.body.name, req.body.surname, req.body.email, req.body.age, req.body.isActive);
+    res.status(200).send(req.body);
 };
 
-updateUser = (req, res) => {
-    var users = helpers.readFromJson();
-    users.forEach(user => {
-        if (user.id === parseInt(req.params.id)) {
-            user.name = req.body.name
-            user.surname = req.body.surname
-            user.email = req.body.email
-            user.age = req.body.age
-            user.isActive = req.body.isActive
+updateUserToSQL = (id, name, surname, email, age, isActive) => {
+    const query = "UPDATE user SET name=?,surname=?,email=?,age=?,isActive=? WHERE id = ?;";
+    return new Promise((resolve, reject) => {
+        conDB.query(query, [name, surname, email, age, isActive, id], (error, results, fields) => {
+            if (error) {
+                reject(error);
+            }
+            else {
 
-            helpers.writeToJson(users)
-
-            res.status(202).send('User udated');
-        }
+                resolve(results);
+            }
+        });
     });
+}
+updateUser = async (req, res, next) => {
+    var users = await getAllUsersQuery()
+    users.filter(user => {
+        if (user.id == parseInt(req.params.id)) {
+            return user
+        } else {
+            var error = new Error(`User with ${req.params.id} does not exist`);
+            error.status = 401;
+            return next(error);
+        }
+
+    });
+    await updateUserToSQL(req.params.id, req.body.name, req.body.surname, req.body.email, req.body.age, req.body.isActive);
+    console.log()
+    res.status(202).send('User udated');
 };
 
 editUser = (req, res) => {
@@ -129,5 +189,5 @@ module.exports = {
     createNewUser,
     updateUser,
     editUser,
-    deleteUser
+    deleteUser,
 }
