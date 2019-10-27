@@ -17,7 +17,7 @@ getUserByName = async (req, res, next) => {
     if (userName.length == 0) {
         var error = new Error('no such username!');
         error.status = 404;
-        next(error);
+        return next(error);
     }
     try {
         const user = await userPromises.getSpecificUserNameQuery(userName);
@@ -36,7 +36,7 @@ getUserByID = async (req, res, next) => {
     if (userID <= 0 || !userExists) {
         var error = new Error(`Post with ${postID} does not exist`);
         error.status = 401;
-         next(error);
+        return next(error);
     }
     try {
         const user = await userPromises.getSpecificUserIDQuery(userID);
@@ -55,16 +55,16 @@ createNewUser = async (req, res, next) => {
     if (userExists) {
         var error = new Error('User with eamil exists!');
         error.status = 401;
-        next(error);
+        return next(error);
     } else if (!helpers.emailValidator(req.body.email)) {
         var error = new Error('Email not valid!');
         error.status = 401;
-        next(error);
+        return next(error);
     }
     else if (!helpers.ageValidator(req.body.age)) {
         var error = new Error('Age must be over 18!');
         error.status = 401;
-        next(error);
+        return next(error);
     } try {
 
         await userPromises.writeNewUserToSQL(req.body.name, req.body.surname, req.body.email, req.body.age, req.body.isActive);
@@ -80,7 +80,7 @@ updateUser = async (req, res, next) => {
     if (!userExists) {
         var error = new Error(`User with ID ${req.params.id} does not exist`);
         error.status = 401;
-        next(error);
+        return next(error);
     } try {
 
         await userPromises.updateUserToSQL(req.params.id, req.body.name, req.body.surname, req.body.email, req.body.age, req.body.isActive);

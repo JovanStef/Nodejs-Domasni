@@ -37,7 +37,7 @@ updatePost = async (req, res, next) => {
     if (!postExists) {
         var error = new Error(`Post with ID ${postID} does not exist!`)
         error.status = 401;
-        next(error);
+        return next(error);
     }
     try {
         await postsPromises.updatePostToSQL(postID, req.body.text, req.body.likes);
@@ -54,12 +54,12 @@ editPost = async (req, res, next) => {
     if (!postExists) {
         var error = new Error(`Post with ID ${postID} does not exist!`);
         error.status = 401;
-        next(error);
+        return next(error);
     }
    else if(req.body.text==null){
         var error = new Error('Text field is mandatory!');
         error.status = 401;
-        next(error);
+        return next(error);
     }
     let postToUpdate = allPosts.filter((post)=>{
         if(post.id === parseInt(req.params.id)){
@@ -89,7 +89,7 @@ deletePost = async(req,res,next)=>{
     if(!postExists){
         var error = new Error(`Post with ID ${postID} does not exist!`);
         error.status=401;
-        next(error)
+        return next(error)
     }
     try{
         await postsPromises.deletePostFromSQL(postID);
