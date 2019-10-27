@@ -32,7 +32,7 @@ getUserByName = async (req, res, next) => {
 getUserByID = async (req, res, next) => {
     const userID = req.params.id;
     if (userID <= 0) {
-        var error = new Error('Id can not be less than 1!');
+        var error = new Error(`Post with ${postID} does not exist`);
         error.status = 401;
         return next(error);
     }
