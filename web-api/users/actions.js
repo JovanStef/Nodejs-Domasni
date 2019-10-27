@@ -131,7 +131,6 @@ updateUserToSQL = (id, name, surname, email, age, isActive) => {
                 reject(error);
             }
             else {
-
                 resolve(results);
             }
         });
@@ -139,35 +138,49 @@ updateUserToSQL = (id, name, surname, email, age, isActive) => {
 }
 updateUser = async (req, res, next) => {
     var users = await getAllUsersQuery()
-    users.filter(user => {
-        if (user.id == parseInt(req.params.id)) {
-            return user
-        } else {
-            var error = new Error(`User with ${req.params.id} does not exist`);
-            error.status = 401;
-            return next(error);
-        }
-
-    });
+    var userExists = users.some(user => { return user.id == parseInt(req.params.id) });
+    if (!userExists) {
+        var error = new Error(`User with ID ${req.params.id} does not exist`);
+        error.status = 401;
+        return next(error);
+    }
     await updateUserToSQL(req.params.id, req.body.name, req.body.surname, req.body.email, req.body.age, req.body.isActive);
-    console.log()
-    res.status(202).send('User udated');
+    res.status(202).send('User updated');
 };
 
-editUser = (req, res) => {
-    var users = helpers.readFromJson();
-    users.forEach((user) => {
+editUser = async(req, res,next) => {
+    var users = await getAllUsersQuery();
+    var userExists = users.some(user => { return user.id == parseInt(req.params.id) });
+    if (!userExists) {
+        var error = new Error(`User with ID ${req.params.id} does not exist`);
+        error.status = 401;
+        return next(error);
+    }
+    if(req.body.name==null||req.body.surname==null||req.body.age==null){
+        var error = new Error('Params: name,surname,age are mandatory!');
+        error.status = 401;
+        return next(error);
+    }
+    let userToUpdate = users.filter((user) => {
         if (user.id === parseInt(req.params.id)) {
-
             user.name = req.body.name
             user.surname = req.body.surname
-
-            helpers.writeToJson(users)
-
-
-            res.send('patchUser')
+            user.age = req.body.age
+            if(req.body.email==null){
+                user.email = user.email
+            }else{
+                user.email = req.body.email
+            }if(req.body.isActive==null){
+                user.isActive = user.isActive
+            }else{
+                user.isActive = req.body.isActive
+            }
+            return user
         }
     });
+    var patchUser = userToUpdate[0];
+    await updateUserToSQL(req.params.id, patchUser.name, patchUser.surname, patchUser.email, patchUser.age, patchUser.isActive);
+    res.status(202).send('User patched');
 };
 
 deleteUser = (req, res) => {
