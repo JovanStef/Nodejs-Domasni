@@ -1,5 +1,3 @@
-const helpers = require('../helpers');
-
 const conDB = require('../database');
 getAllUsersQuery = () => {
     const query = 'SELECT *FROM user';

@@ -1,10 +1,9 @@
 
 var express = require('express');
 var bodyParser = require('body-parser');
-const fs = require('fs');
-const path = require('path');
 
 var users = require('./users/routes');
+var posts = require('./posts/routes')
 var middleware = require('./middleware/common');
 
 
@@ -17,6 +16,7 @@ app.use(bodyParser.json());
 
 app.use(middleware.logger);
 app.use('/users-route', users);
+app.use('/posts-route',posts)
 
 app.use(middleware.errorWrongRoute);
 
