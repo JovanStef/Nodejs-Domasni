@@ -1,32 +1,72 @@
 const conDB = require('../database');
 
-getAllPostsQuery = ()=>{
+getAllPostsQuery = () => {
     const query = 'SELECT * FROM posts';
-    return new Promise((resolve,reject)=>{
-        conDB.query(query,(error,results,fields)=>{
-            if(error){
+    return new Promise((resolve, reject) => {
+        conDB.query(query, (error, results, fields) => {
+            if (error) {
                 reject(error);
-            }else{
+            } else {
                 resolve(results)
             }
         });
     });
 };
 
-getPostByIDQuery = async(id)=>{
-    const query= 'SELECT*FROM posts WHERE id=?';
-    return new Promise((resolve , reject)=>{
-        conDB.query(query,[id],(error,results,fields)=>{
-            if(error){
+getPostByIDQuery = (id) => {
+    const query = 'SELECT*FROM posts WHERE id=?';
+    return new Promise((resolve, reject) => {
+        conDB.query(query, [id], (error, results, fields) => {
+            if (error) {
                 reject(error);
-            }else{
+            } else {
                 resolve(results);
             }
         });
     });
 };
 
-module.exports={
+writeNewPostToSQL = (text, likes) => {
+    const query = "INSERT INTO posts (text, likes,createdOn)VALUES ('" + text + "'," + likes + ",NOW());"
+    return new Promise((resolve, reject) => {
+        conDB.query(query, (error, results, fields) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(results);
+            }
+        });
+    });
+};
+
+updatePostToSQL = (id, text, likes) => {
+    const query = "UPDATE posts SET text=? , likes=?,createdOn=NOW() WHERE id=?;"
+    return new Promise((reslove, reject) => {
+        conDB.query(query, [text, likes, id], (error, results, fields) => {
+            if (error) {
+                reject(error);
+            } else {
+                reslove(results);
+            }
+        });
+    });
+};
+deletePostFromSQL = (id)=>{
+    const query = "DELETE FROM posts WHERE id=?;"
+    return new Promise((reslove,reject)=>{
+        conDB.query(query,[id],(error,results,fields)=>{
+            if(error){
+                reject(error);
+            }else{
+                reslove(results)
+            };
+        });
+    });
+};
+module.exports = {
     getAllPostsQuery,
-    getPostByIDQuery
+    getPostByIDQuery,
+    writeNewPostToSQL,
+    updatePostToSQL,
+    deletePostFromSQL
 }
