@@ -5,7 +5,7 @@ const routes = express.Router();
 
 routes.get('/',actions.getAllPosts);
 routes.get('/:id',actions.getPostByID);
-routes.get('/:id/posts',actions.getPostsFromUserWithID);
+
 routes.post('/',actions.createNewPost);
 routes.put('/:id',actions.updatePost);
 routes.patch('/:id',actions.editPost);

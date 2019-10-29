@@ -32,7 +32,13 @@ getSpecificUserIDQuery = async (userID) => {
             if (error) {
                 reject(error);
             }
+            else if(results.length<1){
+                results = 'User with such ID does not exist'
+                resolve(results);
+
+            }
             else {
+                console.log(results)
                 resolve(results);
             }
         });
@@ -47,6 +53,7 @@ writeNewUserToSQL = (name, surname, email, age, isActive) => {
                 reject(error);
             }
             else {
+                
                 resolve(results);
             }
         });
@@ -60,7 +67,23 @@ updateUserToSQL = (id, name, surname, email, age, isActive) => {
             if (error) {
                 reject(error);
             }
+            else if(results.affectedRows<1){
+               results = 'User with such ID does not exist'
+               resolve(results)
+            }
             else {
+                resolve(results);
+            }
+        });
+    });
+};
+getPostsFromUserWithID_SQL = (userID) => {
+    const query = "SELECT user.id , user.name ,user.surname,posts.UserId,posts.text,posts.likes FROM posts INNER JOIN user ON user.id=posts.UserId WHERE user.id = ?;"
+    return new Promise((resolve, reject) => {
+        conDB.query(query,[userID], (error, results, fields) => {
+            if (error) {
+                reject(error);
+            } else {
                 resolve(results);
             }
         });
@@ -87,5 +110,6 @@ module.exports={
     getSpecificUserIDQuery,
     writeNewUserToSQL,
     updateUserToSQL,
+    getPostsFromUserWithID_SQL,
     deleteUerSQL
 }

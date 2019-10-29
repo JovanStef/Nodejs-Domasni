@@ -39,18 +39,7 @@ writeNewPostToSQL = (text, likes,UserId) => {
     });
 };
 
-getPostsFromUserWithID_SQL = (userID) => {
-    const query = "SELECT user.id , user.name ,user.surname,posts.UserId,posts.text,posts.likes FROM posts INNER JOIN user ON user.id=posts.UserId WHERE user.id = ?;"
-    return new Promise((resolve, reject) => {
-        conDB.query(query,[userID], (error, results, fields) => {
-            if (error) {
-                reject(error);
-            } else {
-                resolve(results);
-            }
-        });
-    });
-};
+
 
 updatePostToSQL = (id, text, likes) => {
     const query = "UPDATE posts SET text=? , likes=?,createdOn=NOW() WHERE id=?;"
@@ -79,7 +68,6 @@ deletePostFromSQL = (id)=>{
 module.exports = {
     getAllPostsQuery,
     getPostByIDQuery,
-    getPostsFromUserWithID_SQL,
     writeNewPostToSQL,
     updatePostToSQL,
     deletePostFromSQL

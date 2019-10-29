@@ -31,16 +31,16 @@ getUserByName = async (req, res, next) => {
 
 getUserByID = async (req, res, next) => {
     const userID = req.params.id;
-    const users = await userPromises.getAllUsersQuery()
-    var userExists = users.some(user => { return req.params.id === user.id });
-    if (userID <= 0 || !userExists) {
-        var error = new Error(`Post with ${postID} does not exist`);
-        error.status = 401;
-        return next(error);
-    }
+    // const users = await userPromises.getAllUsersQuery()
+    // var userExists = users.some(user => { return parseInt(req.params.id) === user.id });
+    // if (userID <= 0 || !userExists) {
+    //     var error = new Error(`User with ${userID} does not exist`);
+    //     error.status = 401;
+    //     return next(error);
+    // }
     try {
         const user = await userPromises.getSpecificUserIDQuery(userID);
-        res.status(200).send(user[0]);
+        res.status(200).send(user);
     }
     catch (error) {
         res.status(500).send(error.message);
@@ -65,7 +65,8 @@ createNewUser = async (req, res, next) => {
         var error = new Error('Age must be over 18!');
         error.status = 401;
         return next(error);
-    } try {
+    } 
+    try {
 
         await userPromises.writeNewUserToSQL(req.body.name, req.body.surname, req.body.email, req.body.age, req.body.isActive);
         res.status(200).send(req.body);
@@ -75,16 +76,17 @@ createNewUser = async (req, res, next) => {
 };
 
 updateUser = async (req, res, next) => {
-    var users = await userPromises.getAllUsersQuery()
-    var userExists = users.some(user => { return user.id == parseInt(req.params.id) });
-    if (!userExists) {
-        var error = new Error(`User with ID ${req.params.id} does not exist`);
-        error.status = 401;
-        return next(error);
-    } try {
+    // var users = await userPromises.getAllUsersQuery()
+    // var userExists = users.some(user => { return user.id == parseInt(req.params.id) });
+    // if (!userExists) {
+    //     var error = new Error(`User with ID ${req.params.id} does not exist`);
+    //     error.status = 401;
+    //     return next(error);
+    // } 
+    try {
 
-        await userPromises.updateUserToSQL(req.params.id, req.body.name, req.body.surname, req.body.email, req.body.age, req.body.isActive);
-        res.status(202).send('User updated');
+      var aaa =   await userPromises.updateUserToSQL(req.params.id, req.body.name, req.body.surname, req.body.email, req.body.age, req.body.isActive);
+        res.status(202).send(aaa);
     } catch (error) {
         res.status(500).send(error.message);
     }
@@ -129,6 +131,14 @@ editUser = async (req, res, next) => {
 
     }
 };
+getPostsFromUserWithID = async (req, res, next) => {
+    try {
+        userAndPosts = await userPromises.getPostsFromUserWithID_SQL(req.params.id);
+        res.status(200).send(userAndPosts);
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+};
 
 
 deleteUser = async (req, res, next) => {
@@ -153,5 +163,6 @@ module.exports = {
     createNewUser,
     updateUser,
     editUser,
+    getPostsFromUserWithID,
     deleteUser,
 }
