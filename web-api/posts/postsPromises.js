@@ -26,10 +26,23 @@ getPostByIDQuery = (id) => {
     });
 };
 
-writeNewPostToSQL = (text, likes) => {
-    const query = "INSERT INTO posts (text, likes,createdOn)VALUES ('" + text + "'," + likes + ",NOW());"
+writeNewPostToSQL = (text, likes,UserId) => {
+    const query = "INSERT INTO posts (text, likes,createdOn,UserId)VALUES (?,?,NOW(),?);"
     return new Promise((resolve, reject) => {
-        conDB.query(query, (error, results, fields) => {
+        conDB.query(query,[text,likes,UserId], (error, results, fields) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(results);
+            }
+        });
+    });
+};
+
+getPostsFromUserWithID_SQL = (userID) => {
+    const query = "SELECT user.id , user.name ,user.surname,posts.UserId,posts.text,posts.likes FROM posts INNER JOIN user ON user.id=posts.UserId WHERE user.id = ?;"
+    return new Promise((resolve, reject) => {
+        conDB.query(query,[userID], (error, results, fields) => {
             if (error) {
                 reject(error);
             } else {
@@ -66,6 +79,7 @@ deletePostFromSQL = (id)=>{
 module.exports = {
     getAllPostsQuery,
     getPostByIDQuery,
+    getPostsFromUserWithID_SQL,
     writeNewPostToSQL,
     updatePostToSQL,
     deletePostFromSQL

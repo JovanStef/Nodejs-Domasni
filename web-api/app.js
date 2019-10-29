@@ -22,7 +22,7 @@ app.use(middleware.errorWrongRoute);
 
 app.use(middleware.errorHandler);
 
-var port = process.env.PORT || 8080
+var port = process.env.PORT || 3030
 app.listen(port, () => {
   console.log(`API is listenig on port ${port}!`)
 });
