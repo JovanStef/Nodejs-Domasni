@@ -100,7 +100,16 @@ deletePost = async (req, res, next) => {
     } catch (error) {
         res.status(500).send(error.message)
     }
-}
+};
+getPostsFromUserWithID = async (req, res, next) => {
+    try {
+        userAndPosts = await postsPromises.getPostsFromUserWithID_SQL(req.params.userId);
+        console.log(userAndPosts)
+        res.status(200).send(userAndPosts);
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+};
 
 module.exports = {
     getAllPosts,
@@ -108,5 +117,6 @@ module.exports = {
     createNewPost,
     updatePost,
     editPost,
-    deletePost
+    deletePost,
+    getPostsFromUserWithID
 }

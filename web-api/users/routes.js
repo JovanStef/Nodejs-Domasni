@@ -5,14 +5,14 @@ const actions = require('./actions');
 
 var routes = express.Router();
 
-routes.get('/',actions.getAllUsers);
+routes.get('/users',actions.getAllUsers);
 
-routes.get('/name/:name',actions.getUserByName);
-routes.get('/id/:id',actions.getUserByID);
-routes.post('/',actions.createNewUser);
-routes.put('/:id', actions.updateUser);
-routes.patch('/:id',actions.editUser);
-routes.get('/:id/posts',actions.getPostsFromUserWithID);
+routes.get('/users/name/:name',actions.getUserByName);
+routes.get('/users/id/:id',actions.getUserByID);
+routes.post('/users',actions.createNewUser);
+routes.put('/users/:id', actions.updateUser);
+routes.patch('/users/:id',actions.editUser);
+
 routes.delete('/:id', actions.deleteUser);
 
 module.exports = routes

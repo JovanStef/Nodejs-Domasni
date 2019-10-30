@@ -131,14 +131,7 @@ editUser = async (req, res, next) => {
 
     }
 };
-getPostsFromUserWithID = async (req, res, next) => {
-    try {
-        userAndPosts = await userPromises.getPostsFromUserWithID_SQL(req.params.id);
-        res.status(200).send(userAndPosts);
-    } catch (error) {
-        res.status(500).send(error.message);
-    }
-};
+
 
 
 deleteUser = async (req, res, next) => {
@@ -163,6 +156,5 @@ module.exports = {
     createNewUser,
     updateUser,
     editUser,
-    getPostsFromUserWithID,
     deleteUser,
 }
