@@ -23,11 +23,9 @@ INSERT INTO comment (text,postID, userID) VALUES("One morning, when Gregor Samsa
 ("But I must explain to you how all this mistaken",3,4),
 ("The European languages are members of the same family. Their,",4,5);
 
-SELECT user.id , user.name ,user.surname,posts.UserId,posts.text,posts.likes , comment.text, comment.postID,comment.userID FROM user 
+SELECT*FROM user 
 INNER JOIN posts ON user.id=posts.UserId
-INNER JOIN comment ON user.id=comment.userID;
-
-SELECT posts.UserId,posts.text,posts.likes , comment.text, comment.postID,comment.userID FROM posts 
-INNER JOIN comment ON posts.id=comment.userID;
+INNER JOIN comment ON user.id=comment.userID
+WHERE user.id=5;
 
 
