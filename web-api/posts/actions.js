@@ -1,5 +1,6 @@
 const helpers = require('../helpers');
 const postsPromises = require('./postsPromises');
+const {User} = require('../models');
 
 getAllPosts = async (req, res) => {
     try {
@@ -105,19 +106,20 @@ getPostsFromUserWithID = async (req, res, next) => {
     try {
         userAndPosts = await postsPromises.getPostsFromUserWithID_SQL(req.params.userId);
     
-        var posts = userAndPosts.map(post=>{
-            var temp={ text : post.text,
-                likes : post.likes
-            }
-            return temp
-        });
-        var user = {
-            name:userAndPosts[0].name,
-            surname:userAndPosts[0].surname,
-            post:posts
-        }
-        console.log(user)
-        res.status(200).send(user);
+        // var posts = userAndPosts.map(post=>{
+        //     var temp={ text : post.text,
+        //         likes : post.likes
+        //     }
+        //     return temp
+        // });
+        // var user = {
+        //     name:userAndPosts[0].name,
+        //     surname:userAndPosts[0].surname,
+        //     post:posts
+        // }
+        // console.log(user)
+        var user = new User(userAndPosts)
+        res.status(200).send(user.getUser());
     } catch (error) {
         res.status(500).send(error.message);
     }
