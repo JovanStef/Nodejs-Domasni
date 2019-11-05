@@ -1,5 +1,6 @@
 const helpers = require('../helpers');
 const userPromises = require('./userPromises');
+const bcrypt = require('bcryptjs')
 
 getAllUsers = async (req, res) => {
     try {
@@ -67,8 +68,8 @@ createNewUser = async (req, res, next) => {
         return next(error);
     } 
     try {
-
-        await userPromises.writeNewUserToSQL(req.body.name, req.body.surname, req.body.email, req.body.age, req.body.isActive);
+        var hash = bcrypt.hashSync(req.body.password, 8)
+        await userPromises.writeNewUserToSQL(req.body.name, req.body.surname, req.body.email, req.body.age, req.body.isActive,hash);
         res.status(200).send(req.body);
     } catch (error) {
         res.status(500).send(error.message);

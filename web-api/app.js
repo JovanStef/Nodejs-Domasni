@@ -16,7 +16,7 @@ app.use(bodyParser.json());
 
 app.use(middleware.logger);
 
-app.use('/router',mainRouter)
+app.use(mainRouter)
 
 
 app.use(middleware.errorWrongRoute);

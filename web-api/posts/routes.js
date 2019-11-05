@@ -4,7 +4,7 @@ const actions= require('./actions');
 const routes = express.Router();
 
 routes.get('/users/posts',actions.getAllPosts);
-routes.get('/users/:userId/posts/:postId',actions.getPostByID);
+routes.get('/users/posts/:postId',actions.getPostByID);
 routes.get('/users/:userId/posts',actions.getPostsFromUserWithID);
 routes.post('/users/:userId/posts',actions.createNewPost);
 routes.put('/users/:userId/posts',actions.updatePost);

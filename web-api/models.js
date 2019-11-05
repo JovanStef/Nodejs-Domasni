@@ -26,28 +26,29 @@
 // };
 
 
-class User{
-    constructor(userAndPosts){
+class User {
+    constructor(userAndPosts) {
         this.userProp = userAndPosts[0];
         this.postsProp = userAndPosts
     }
-    toJson(){
-        this.posts = this.postsProp.map(post=>{
-            var temp={ text : post.text,
-                likes : post.likes
+    toJson() {
+        this.posts = this.postsProp.map(post => {
+            var temp = {
+                text: post.text,
+                likes: post.likes
             }
             return temp
         });
-        var user ={
-            name:this.userProp.name,
-            surname:this.userProp.surname,
-            posts:this.posts
+        var user = {
+            name: this.userProp.name,
+            surname: this.userProp.surname,
+            posts: this.posts
         }
         return user
     };
 };
 
-module.exports={
+module.exports = {
     // Posts,
     User
 }

@@ -12,7 +12,7 @@ getAllPosts = async (req, res) => {
 };
 
 getPostByID = async (req, res, next) => {
-    const postID = req.params.id;
+    const postID = req.params.postId;
     try {
         const post = await postsPromises.getPostByIDQuery(postID);
         res.status(500).send(post);
@@ -117,7 +117,7 @@ getPostsFromUserWithID = async (req, res, next) => {
         //     surname:userAndPosts[0].surname,
         //     post:posts
         // }
-        // console.log(user)
+        console.log(userAndPosts)
         var user = new User(userAndPosts)
         res.status(200).send(user.toJson());
     } catch (error) {

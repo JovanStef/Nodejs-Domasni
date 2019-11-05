@@ -45,10 +45,10 @@ getSpecificUserIDQuery = async (userID) => {
     });
 };
 
-writeNewUserToSQL = (name, surname, email, age, isActive) => {
-    const query = "INSERT INTO user (name, surname, email,age,IsActive) VALUES ('" + name + "','" + surname + "','" + email + "'," + age + "," + isActive + ");";
+writeNewUserToSQL = (name, surname, email, age, isActive,password) => {
+    const query = "INSERT INTO user (name, surname, email,age,IsActive,password) VALUES (?,?,?,?,?,?);";
     return new Promise((resolve, reject) => {
-        conDB.query(query, (error, results, fields) => {
+        conDB.query(query,[name, surname, email, age, isActive,password] ,(error, results, fields) => {
             if (error) {
                 reject(error);
             }

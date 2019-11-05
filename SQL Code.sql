@@ -1,4 +1,4 @@
-SELECT * FROM user JOIN posts ON user.id=posts.UserId ;
+SELECT * FROM user INNER JOIN posts ON user.id=posts.UserId INNER JOIN comment ON comment.postID=posts.id ORDER BY user.id;
 
 CREATE TABLE comment (
 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -14,18 +14,29 @@ ADD FOREIGN KEY (postID) REFERENCES posts(id);
 ALTER TABLE comment
 ADD FOREIGN KEY (userID) REFERENCES user(id);
 
+ALTER TABLE posts ADD FOREIGN KEY (UserId) REFERENCES user(id); 
+
+ALTER TABLE user ADD COLUMN password VARCHAR(64) NOT NULL DEFAULT "password";
+
+DELETE FROM user WHERE id=0;
+
 SELECT * FROM comment ;
 SELECT * FROM posts ;
+SELECT * FROM user;
+
+ALTER TABLE user DROP COLUMN password ;
+
+ALTER TABLE posts DROP FOREIGN KEY userID;
+
+DROP TABLE comment;
 
 
-INSERT INTO comment (text,postID, userID) VALUES("One morning, when Gregor Samsa woke from troubled dreams, he",1,2),
-("Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo",2,3),
-("But I must explain to you how all this mistaken",3,4),
-("The European languages are members of the same family. Their,",4,5);
+INSERT INTO comment (text,postID, userID) VALUES("One morning, when Gregor Samsa woke from troubled dreams, he",4,5),
+("Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo",3,4),
+("But I must explain to you how all this mistaken",2,3),
+("The European languages are members of the same family. Their,",1,2);
 
 SELECT*FROM user 
-INNER JOIN posts ON user.id=posts.UserId
-INNER JOIN comment ON user.id=comment.userID
-WHERE user.id=5;
+INNER JOIN posts ON user.id=posts.UserId;
 
 
