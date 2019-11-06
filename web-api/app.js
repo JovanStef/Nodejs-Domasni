@@ -6,6 +6,10 @@ var mainRouter = require('./router');
 
 var middleware = require('./middleware/common');
 
+var jwt = require('express-jwt');
+
+var unless = require('express-unless')
+
 
 require('dotenv/config');
 
@@ -14,6 +18,7 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+app.use(jwt({ secret: 'trt'}).unless({path: ['/login','/users']}));
 app.use(middleware.logger);
 
 app.use(mainRouter)

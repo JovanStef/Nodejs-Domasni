@@ -38,13 +38,25 @@ getSpecificUserIDQuery = async (userID) => {
 
             }
             else {
-                console.log(results)
+                
                 resolve(results);
             }
         });
     });
 };
-
+getSpecificUserByEmailQuery = async (email) => {
+    const query = 'SELECT * FROM user WHERE email=?';
+    return new Promise((resolve, reject) => {
+        conDB.query(query, [email], (error, results, fields) => {
+            if (error) {
+                reject(error);
+            }
+            else {
+                resolve(results);
+            }
+        });
+    });
+};
 writeNewUserToSQL = (name, surname, email, age, isActive,password) => {
     const query = "INSERT INTO user (name, surname, email,age,IsActive,password) VALUES (?,?,?,?,?,?);";
     return new Promise((resolve, reject) => {
@@ -60,10 +72,10 @@ writeNewUserToSQL = (name, surname, email, age, isActive,password) => {
     });
 };
 
-updateUserToSQL = (id, name, surname, email, age, isActive) => {
-    const query = "UPDATE user SET name=?,surname=?,email=?,age=?,isActive=? WHERE id = ?;";
+updateUserToSQL = (id, name, surname, email, age, isActive,password) => {
+    const query = "UPDATE user SET name=?,surname=?,email=?,age=?,isActive=?,password=? WHERE id = ?;";
     return new Promise((resolve, reject) => {
-        conDB.query(query, [name, surname, email, age, isActive, id], (error, results, fields) => {
+        conDB.query(query, [name, surname, email, age, isActive, password,id], (error, results, fields) => {
             if (error) {
                 reject(error);
             }
@@ -97,6 +109,7 @@ module.exports={
     getAllUsersQuery,
     getSpecificUserNameQuery,
     getSpecificUserIDQuery,
+    getSpecificUserByEmailQuery,
     writeNewUserToSQL,
     updateUserToSQL,
     deleteUerSQL

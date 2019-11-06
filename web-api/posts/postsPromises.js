@@ -66,7 +66,7 @@ deletePostFromSQL = (id)=>{
     });
 };
 getPostsFromUserWithID_SQL = (userID) => {
-    const query = "SELECT user.id , user.name ,user.surname,posts.UserId,posts.text,posts.likes FROM posts INNER JOIN user ON user.id=posts.UserId WHERE user.id = ?;"
+    const query = "SELECT  user.name ,user.surname,posts.text,posts.likes,posts.id,comment.postID,comment.commentText FROM posts INNER JOIN user ON user.id=posts.UserId INNER JOIN comment ON comment.postID=posts.id WHERE user.id = ?;"
     return new Promise((resolve, reject) => {
         conDB.query(query,[userID], (error, results, fields) => {
             if (error) {

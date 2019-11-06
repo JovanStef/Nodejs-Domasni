@@ -31,11 +31,31 @@ class User {
         this.userProp = userAndPosts[0];
         this.postsProp = userAndPosts
     }
+
     toJson() {
-        this.posts = this.postsProp.map(post => {
+        this.posts = this.postsProp.map((post, index) => {
+            this.comment = []
+            var comment = this.postsProp
+            for (var i = 0; i < comment.length; i++) {
+                if (comment[i].postID === comment[index].id) {
+                    var temp = {
+                        commentText: comment[i].commentText,
+                        commentID: comment[i].postID
+                    }
+                    // console.log(temp)
+
+                    this.comment.push(temp)
+                }
+            }
+
+            console.log(this.comment);
+        
             var temp = {
-                text: post.text,
-                likes: post.likes
+                postID: post.id,
+                postText: post.text,
+                postLikes: post.likes,
+                commentText: this.comment
+
             }
             return temp
         });

@@ -117,7 +117,7 @@ getPostsFromUserWithID = async (req, res, next) => {
         //     surname:userAndPosts[0].surname,
         //     post:posts
         // }
-        console.log(userAndPosts)
+        
         var user = new User(userAndPosts)
         res.status(200).send(user.toJson());
     } catch (error) {

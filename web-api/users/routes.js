@@ -9,6 +9,7 @@ routes.get('/users',actions.getAllUsers);
 routes.get('/users/name/:name',actions.getUserByName);
 routes.get('/users/id/:id',actions.getUserByID);
 routes.post('/users',actions.createNewUser);
+routes.post('/login',actions.loginUser);
 routes.put('/users/:id', actions.updateUser);
 routes.patch('/users/:id',actions.editUser);
 routes.delete('/:id', actions.deleteUser);

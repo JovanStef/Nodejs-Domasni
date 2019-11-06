@@ -1,6 +1,8 @@
 const helpers = require('../helpers');
 const userPromises = require('./userPromises');
 const bcrypt = require('bcryptjs')
+var jwt = require('jsonwebtoken');
+
 
 getAllUsers = async (req, res) => {
     try {
@@ -49,6 +51,25 @@ getUserByID = async (req, res, next) => {
 
 };
 
+loginUser = async (req, res, next) => {
+    const bodyEmail = req.body.email;
+    const bodyPassword = req.body.password;
+    try {
+        const user = await userPromises.getSpecificUserByEmailQuery(bodyEmail);
+        var match = bcrypt.compareSync(bodyPassword, user[0].password);
+        var currentUser = user[0];
+        if (match) {
+            var privateKey = 'trt'
+            var token = jwt.sign({ currentUser}, privateKey,{ expiresIn: '1h' });
+            res.status(200).send(token);
+        } else {
+            res.status(401).send('YOU SHALL NOT PASS !!!!');
+        }
+        console.log(match);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+}
 
 createNewUser = async (req, res, next) => {
     const users = await userPromises.getAllUsersQuery()
@@ -66,10 +87,10 @@ createNewUser = async (req, res, next) => {
         var error = new Error('Age must be over 18!');
         error.status = 401;
         return next(error);
-    } 
+    }
     try {
         var hash = bcrypt.hashSync(req.body.password, 8)
-        await userPromises.writeNewUserToSQL(req.body.name, req.body.surname, req.body.email, req.body.age, req.body.isActive,hash);
+        await userPromises.writeNewUserToSQL(req.body.name, req.body.surname, req.body.email, req.body.age, req.body.isActive, hash);
         res.status(200).send(req.body);
     } catch (error) {
         res.status(500).send(error.message);
@@ -86,7 +107,7 @@ updateUser = async (req, res, next) => {
     // } 
     try {
 
-      var aaa =   await userPromises.updateUserToSQL(req.params.id, req.body.name, req.body.surname, req.body.email, req.body.age, req.body.isActive);
+        var aaa = await userPromises.updateUserToSQL(req.params.id, req.body.name, req.body.surname, req.body.email, req.body.age, req.body.isActive);
         res.status(202).send(aaa);
     } catch (error) {
         res.status(500).send(error.message);
@@ -120,12 +141,18 @@ editUser = async (req, res, next) => {
             } else {
                 user.isActive = req.body.isActive
             }
+            if (req.body.password == null) {
+                user.password = user.password
+            } else {
+                var hash = bcrypt.hashSync(req.body.password, 8)
+                user.password = hash
+            }
             return user
         }
     });
     try {
         var patchUser = userToUpdate[0];
-        await userPromises.updateUserToSQL(req.params.id, patchUser.name, patchUser.surname, patchUser.email, patchUser.age, patchUser.isActive);
+        await userPromises.updateUserToSQL(req.params.id, patchUser.name, patchUser.surname, patchUser.email, patchUser.age, patchUser.isActive, patchUser.password);
         res.status(202).send('User patched');
     } catch (error) {
         res.status(500).send(error.message);
@@ -154,6 +181,7 @@ module.exports = {
     getAllUsers,
     getUserByName,
     getUserByID,
+    loginUser,
     createNewUser,
     updateUser,
     editUser,
